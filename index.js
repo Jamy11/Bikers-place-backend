@@ -16,7 +16,15 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log('connected')
+        const database = client.db('Bikers')
+        const usersCollection = database.collection('users');
+
+        // insert user in user table
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await usersCollection.insertOne(user);
+            res.json(result);
+        });
        
     }
     finally {
@@ -27,7 +35,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get('/', (req, res) => {
-    res.send('Hello Doctors portal!')
+    res.send('Hello Bikers Gang!')
 })
 
 app.listen(port, () => {
