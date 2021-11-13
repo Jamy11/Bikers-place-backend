@@ -141,14 +141,6 @@ async function run() {
             res.json(result)
         })
 
-
-
-
-
-
-
-
-
     }
     finally {
         // await client.close();
