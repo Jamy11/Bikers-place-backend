@@ -32,7 +32,7 @@ async function run() {
 
         // get all bike product
 
-        app.get('/bike-collection',async(req,res)=>{
+        app.get('/bike-collection', async (req, res) => {
             const cursor = bikeCollection.find({})
             const result = await cursor.toArray()
             res.json(result)
@@ -40,36 +40,45 @@ async function run() {
 
         // get single bike by id
 
-        app.get('/bike-collection/:id',async(req,res)=>{
+        app.get('/bike-collection/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id : ObjectId(id)}
-            const result =await bikeCollection.findOne(query)
+            const query = { _id: ObjectId(id) }
+            const result = await bikeCollection.findOne(query)
             res.json(result)
+        })
+        // add rating
+        app.put('/bike-collection/', async (req, res) => {
+            const user = req.body;
+            const filter = { _id: ObjectId(user._id) };
+            // const options = { upsert: true };
+            const updateDoc = { $set: {rating : user.rating} };
+            const result = await bikeCollection.updateOne(filter, updateDoc );
+            res.json(result);
         })
 
         // place bike order
-        app.post('/bike-order',async (req,res)=>{
+        app.post('/bike-order', async (req, res) => {
             const order = req.body
             const result = await orderCollection.insertOne(order)
             res.json(result)
         })
 
         // get all order by user email
-        app.get('/bike-order/:email',async(req,res)=>{
+        app.get('/bike-order/:email', async (req, res) => {
             const email = req.params.email
-            const cursor = orderCollection.find({email:email})
+            const cursor = orderCollection.find({ email: email })
             const result = await cursor.toArray()
             res.json(result)
         })
 
         // delte bike oder
-        app.delete('/bike-orders/:id', async (req,res)=>{
+        app.delete('/bike-orders/:id', async (req, res) => {
             const id = req.params.id
-            const query = {_id : ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const result = await orderCollection.deleteOne(query)
             res.json(result)
         })
-       
+
     }
     finally {
         // await client.close();
