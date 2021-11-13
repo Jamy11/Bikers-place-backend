@@ -29,6 +29,36 @@ async function run() {
             res.json(result);
         });
 
+        // check user is admin or not
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const user = await usersCollection.findOne(query);
+            let isAdmin = false;
+            if (user?.role === 'admin') {
+                isAdmin = true;
+            }
+            res.json({ admin: isAdmin });
+        })
+
+        // admin
+        // make admin
+        app.put('/users', async (req, res) => {
+            const user = req.body;
+            console.log(user)
+
+            const filter = { email: user.email };
+            const updateDoc = { $set: { role : "admin"} };
+            const result = await usersCollection.updateOne(filter, updateDoc );
+            console.log(result)
+            res.json(result);
+        })
+
+
+
+
+
+
 
         // get all bike product
 
@@ -56,6 +86,30 @@ async function run() {
             res.json(result);
         })
 
+        // admin
+        // admin delete product
+        app.delete('/bike-collection/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: ObjectId(id) }
+            const result = await bikeCollection.deleteOne(query)
+            res.json(result)
+        })
+
+        // admin
+        // add a product admin
+        app.post('/bike-collection', async (req, res) => {
+            const order = req.body
+            const result = await bikeCollection.insertOne(order)
+            res.json(result)
+        })
+
+
+
+
+
+
+
+
         // place bike order
         app.post('/bike-order', async (req, res) => {
             const order = req.body
@@ -78,6 +132,22 @@ async function run() {
             const result = await orderCollection.deleteOne(query)
             res.json(result)
         })
+        
+        // admin
+        // Get all orders
+        app.get('/bike-order/', async (req, res) => {
+            const cursor = orderCollection.find({})
+            const result = await cursor.toArray()
+            res.json(result)
+        })
+
+
+
+
+
+
+
+
 
     }
     finally {
